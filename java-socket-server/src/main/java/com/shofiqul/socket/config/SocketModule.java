@@ -1,5 +1,6 @@
 package com.shofiqul.socket.config;
 
+import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.shofiqul.socket.dto.MessageDto;
 import jakarta.annotation.PostConstruct;
@@ -8,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SocketModule {
@@ -29,8 +33,13 @@ public class SocketModule {
     }
 
     public void addEventListener() {
+        Map<String, SocketIOClient> users = new HashMap<>();
+
         server.addConnectListener(client -> {
-            client.sendEvent("connect", "Socket connected!");
+            client.sendEvent("connected", "Socket connected!");
+            String username = client.getHandshakeData().getSingleUrlParam("username");
+            users.put(username, client);
+            log.info("{} client connected!", client.getSessionId());
         });
 
         server.addDisconnectListener(client -> {
@@ -38,7 +47,8 @@ public class SocketModule {
         });
 
         server.addEventListener("message", MessageDto.class, (client, message, request) -> {
-            client.sendEvent("message", message);
+            SocketIOClient toClient = users.get(message.getToUsername());
+            toClient.sendEvent("message", message);
         });
     }
 }

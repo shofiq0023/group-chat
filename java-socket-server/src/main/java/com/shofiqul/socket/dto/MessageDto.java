@@ -10,13 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDto {
-    private String userId;
+    private String toUsername;
+    private String fromUsername;
     private String message;
-    private long timestamp;
-
-    public MessageDto(String userId, String message) {
-        this.userId = userId;
-        this.message = message;
-        this.timestamp = System.currentTimeMillis();
-    }
 }
