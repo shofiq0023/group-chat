@@ -42,9 +42,7 @@ public class SocketModule {
             log.info("{} client connected!", client.getSessionId());
         });
 
-        server.addDisconnectListener(client -> {
-            log.info("{} disconnected", client.getSessionId());
-        });
+        server.addDisconnectListener(client -> log.info("{} disconnected", client.getSessionId()));
 
         server.addEventListener("message", MessageDto.class, (client, message, request) -> {
             SocketIOClient toClient = users.get(message.getToUsername());
