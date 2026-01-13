@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {io, Socket} from 'socket.io-client';
 import {GlobalConst} from '../global-constant';
 import {Observable} from 'rxjs';
+import {NgxSonnerToaster, toast} from 'ngx-sonner';
+import {BroadcastMessage} from '../model/broadcast-message';
 
 export interface Data {
     to: string;
@@ -13,6 +15,8 @@ export interface Data {
     providedIn: 'root',
 })
 export class SocketService {
+    protected readonly toast = toast;
+
     private socket: Socket | null = null;
     private serverUrl = GlobalConst.socketServer; // Update with your server URL
 
@@ -28,10 +32,12 @@ export class SocketService {
 
         this.socket.on('connect', () => {
             console.log('Connected to server with ID:', this.socket?.id);
+            toast.success('Connected!');
         });
 
         this.socket.on('connect_error', (error) => {
             console.error('Connection error:', error);
+            toast.error('There was a problem connecting...!');
         });
 
         this.socket.on('disconnect', (reason) => {
@@ -67,20 +73,19 @@ export class SocketService {
         });
     }
 
-    public onGetMessage(): Observable<Data> {
+    public onGetMessage(): Observable<BroadcastMessage> {
         return new Observable(observer => {
             if (!this.socket) {
                 observer.error('Socket not connected');
                 return;
             }
 
-            this.socket.on('getMessage', (data: string) => {
-                const parsedData: Data = JSON.parse(data);
-                observer.next(parsedData);
+            this.socket.on('broadcast_message', (data: BroadcastMessage) => {
+                observer.next(data);
             });
 
             return () => {
-                this.socket?.off('getMessage');
+                this.socket?.off('broadcast_message');
             };
         });
     }
@@ -95,13 +100,12 @@ export class SocketService {
         this.socket.emit('sendMessage', jsonData);
     }
 
-    public sendBroadcastMessage(message: string): void {
+    public sendBroadcastMessage(message: BroadcastMessage): void {
         if (!this.socket?.connected) {
             console.error('Socket not connected');
             return;
         }
 
-        const data = JSON.stringify({ message });
-        this.socket.emit('message', data);
+        this.socket.emit('broadcast_message', message);
     }
 }

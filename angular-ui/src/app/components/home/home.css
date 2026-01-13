@@ -155,13 +155,13 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1px;
 }
 
 .message {
     max-width: 70%;
-    padding: 12px 15px;
-    border-radius: 12px;
+    padding: 5px 15px;
+    border-radius: 8px;
     background-color: #e3f2fd;
     align-self: flex-start;
 }

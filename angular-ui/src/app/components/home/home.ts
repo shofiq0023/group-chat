@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Data, SocketService} from '../../services/socket-service';
 import {Subject, takeUntil} from 'rxjs';
 import {FormsModule} from '@angular/forms';
@@ -6,6 +6,8 @@ import {CommonModule} from '@angular/common';
 import {FaIconComponent, IconDefinition} from '@fortawesome/angular-fontawesome';
 import {faBullhorn, faCommentDots, faLinkSlash, faPaperPlane, faUserGroup} from '@fortawesome/free-solid-svg-icons';
 import {NgxSonnerToaster, toast} from 'ngx-sonner';
+import {LocalStorageService} from '../../services/local-storage-service';
+import {BroadcastMessage} from '../../model/broadcast-message';
 
 interface Message {
     from: string;
@@ -31,14 +33,15 @@ export class Home implements OnInit, OnDestroy {
 
     public username = '';
     public isConnected = false;
-    public users: string[] = [];
-    public messages: Message[] = [];
+    public messages: BroadcastMessage[] = [];
     public selectedUser = '';
     public messageText = '';
 
+    @ViewChild("messageList") private messageListContainer!: ElementRef;
+
     private destroy$ = new Subject<void>();
 
-    constructor(private socketService: SocketService) {
+    constructor(private socketService: SocketService, private cdr: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
@@ -56,41 +59,34 @@ export class Home implements OnInit, OnDestroy {
         this.socketService.disconnect();
     }
 
+    private scrollToBottom(): void {
+        const el = this.messageListContainer.nativeElement;
+        el.scrollTop = el.scrollHeight;
+    }
+
     public connectToServer(): void {
         if (!this.username.trim()) {
             toast.warning('Please enter a username');
             return;
         }
 
-        localStorage.setItem('username', this.username);
-        this.socketService.connect(this.username);
+        localStorage.setItem('username', this.username.toLowerCase());
+        this.socketService.connect(this.username.toLowerCase());
         this.isConnected = true;
-        toast.success('Connected!');
-
-        // Subscribe to user list updates
-        this.socketService.onUserList()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (users) => {
-                    this.users = users.filter(u => u !== this.username);
-                    console.log('Users updated:', users);
-                },
-                error: (err) => console.error('Error receiving user list:', err)
-            });
 
         // Subscribe to incoming messages
         this.socketService.onGetMessage()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-                next: (data: Data) => {
-                    const message: Message = {
-                        from: data.from || 'Unknown',
-                        to: data.to,
+                next: (data: BroadcastMessage) => {
+                    const message: BroadcastMessage = {
+                        fromUsername: data.fromUsername || 'unknown',
                         message: data.message,
-                        timestamp: new Date()
+                        timestamp: data.timestamp,
                     };
                     this.messages.push(message);
-                    console.log('Message received:', message);
+                    this.cdr.detectChanges();
+                    this.scrollToBottom();
                 },
                 error: (err) => console.error('Error receiving message:', err)
             });
@@ -99,7 +95,6 @@ export class Home implements OnInit, OnDestroy {
     public disconnect(): void {
         this.socketService.disconnect();
         this.isConnected = false;
-        this.users = [];
         this.messages = [];
         localStorage.removeItem('username');
         toast.warning('Disconnected');
@@ -111,31 +106,13 @@ export class Home implements OnInit, OnDestroy {
             return;
         }
 
-        if (!this.selectedUser) {
-            // Broadcast message
-            this.socketService.sendBroadcastMessage(this.messageText);
-        } else {
-            // Direct message
-            const data: Data = {
-                to: this.selectedUser,
-                message: this.messageText,
-                from: this.username
-            };
-            this.socketService.sendMessage(data);
-
-            // Add to local messages
-            this.messages.push({
-                from: this.username,
-                to: this.selectedUser,
-                message: this.messageText,
-                timestamp: new Date()
-            });
+        const message: BroadcastMessage = {
+            fromUsername: this.username.toLowerCase(),
+            message: this.messageText,
+            timestamp: new Date()
         }
 
+        this.socketService.sendBroadcastMessage(message);
         this.messageText = '';
-    }
-
-    public selectUser(user: string): void {
-        this.selectedUser = user;
     }
 }

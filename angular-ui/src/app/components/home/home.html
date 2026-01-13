@@ -1,8 +1,8 @@
-<ngx-sonner-toaster richColors closeButton />
+<ngx-sonner-toaster richColors closeButton/>
 <div class="chat-container">
 
     <!-- Login Section -->
-    @if(!isConnected) {
+    @if (!isConnected) {
         <div class="login-section">
             <h2>Connect to Chat</h2>
             <input
@@ -17,13 +17,13 @@
     }
 
     <!-- Chat Section -->
-    @if(isConnected) {
+    @if (isConnected) {
         <div class="chat-section">
             <div class="header d-flex justify-content-between align-items-center text-white">
                 <h2>Welcome, {{ username }}!</h2>
                 <button (click)="disconnect()" class="btn btn-danger">
                     Disconnect
-                    <fa-icon class="ps-1 fa-sm" [icon]="disconnectIcon" />
+                    <fa-icon class="ps-1 fa-sm" [icon]="disconnectIcon"/>
                 </button>
             </div>
 
@@ -31,28 +31,26 @@
                 <!-- Users List -->
                 <div class="groups-panel">
                     <h3>
-                        <fa-icon class="pe-1" [icon]="groupIcon" />
-                        Groups ({{ users.length }})
+                        <fa-icon class="pe-1" [icon]="groupIcon"/>
+                        0
                     </h3>
                     <div class="groups-list">
                         <div
                             class="group-item"
                             [class.selected]="selectedUser === ''"
-                            (click)="selectUser('')"
                         >
-                            <span><fa-icon class="pe-1" [icon]="broadcastIcon" /></span>
+                            <span><fa-icon class="pe-1" [icon]="broadcastIcon"/></span>
                             Broadcast to All
                         </div>
-                        @for (user of users; track user) {
-                            <div
-                                class="group-item"
-                                [class.selected]="user === selectedUser"
-                                (click)="selectUser(user)"
-                            >
-                                <span class="group-status">●</span>
-                                {{ user }}
-                            </div>
-                        }
+                        <!--                        @for (user of users; track user) {-->
+                        <!--                            <div-->
+                        <!--                                class="group-item"-->
+                        <!--                                [class.selected]="user === selectedUser"-->
+                        <!--                            >-->
+                        <!--                                <span class="group-status">●</span>-->
+                        <!--                                {{ user }}-->
+                        <!--                            </div>-->
+                        <!--                        }-->
                     </div>
                 </div>
 
@@ -61,24 +59,30 @@
                     <div class="messages-header">
                         <h3>
                             {{ selectedUser ? 'Chat with ' + selectedUser : 'Broadcast Messages' }}
-                            <fa-icon class="ps-1" [icon]="chatIcon" />
+                            <fa-icon class="ps-1" [icon]="chatIcon"/>
                         </h3>
                     </div>
 
-                    <div class="messages-list">
-                        @for (msg of messages; track msg) {
+                    <div class="messages-list" #messageList>
+                        @for (msg of messages; let i = $index; track msg) {
                             <div
                                 class="message"
-                                [class.own-message]="msg.from === username"
+                                [class.own-message]="msg.fromUsername === username"
                             >
-                                <div class="message-header">
-                                    <strong>{{ msg.from }}</strong>
-                                    @if (msg.to) {
-                                        <span> → {{ msg.to }}</span>
-                                    }
-                                    <span class="timestamp">{{ msg.timestamp | date:'short' }}</span>
+
+                                @if (i === 0 || messages[i - 1].fromUsername !== msg.fromUsername) {
+                                    <div class="message-header">
+                                        <strong>{{ msg.fromUsername }}</strong>
+                                        <span class="timestamp">
+                                            {{ msg.timestamp | date:'hh:mm a, dd/MM/yy' }}
+                                        </span>
+                                    </div>
+                                }
+
+                                <div class="message-body">
+                                    {{ msg.message }}
                                 </div>
-                                <div class="message-body">{{ msg.message }}</div>
+
                             </div>
                         }
 
@@ -87,8 +91,8 @@
                                 No messages yet. Start chatting!
                             </div>
                         }
-
                     </div>
+
 
                     <div class="message-input">
                         <input
@@ -99,7 +103,9 @@
                             class="text-input"
                         />
 
-                        <button (click)="sendMessage()" class="send-btn">Send <fa-icon class="ps-1 fa-sm" [icon]="sendIcon"/></button>
+                        <button (click)="sendMessage()" class="send-btn">Send
+                            <fa-icon class="ps-1 fa-sm" [icon]="sendIcon"/>
+                        </button>
                     </div>
                 </div>
             </div>
