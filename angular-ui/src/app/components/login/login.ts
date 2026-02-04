@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {LocalStorageService} from '../../services/local-storage-service';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {GlobalConst} from '../../global-constant';
+import {FaIconComponent, IconDefinition} from '@fortawesome/angular-fontawesome';
+import {faCommentDots, faRightToBracket} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+    imports: [FormsModule, RouterLink, FaIconComponent],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
+    public loginIcon: IconDefinition = faRightToBracket;
     public username: string = '';
 
     constructor(private storageService: LocalStorageService, private router: Router) { }
@@ -24,4 +27,6 @@ export class Login {
         this.storageService.store(GlobalConst.USERNAME_KEY, this.username);
         this.storageService.store(GlobalConst.LOGIN_KEY, true.toString());
     }
+
+    protected readonly chatIcon = faCommentDots;
 }

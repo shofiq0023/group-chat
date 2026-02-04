@@ -1,22 +1,46 @@
-<div class="container vh-100 d-flex justify-content-center align-items-center">
-    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
-        <h4 class="text-center mb-4">Login</h4>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card login-container shadow">
+                <div class="card-header accent-bg text-white text-center">
+                    <h3 class="mb-0">Sign In</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form ngNativeValidate>
+                        <div class="mb-3">
+                            <label for="loginInput" class="form-label">Email or Username</label>
+                            <input type="text" class="form-control" id="loginInput" placeholder="Enter email or username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn accent-btn btn-lg">
+                                Login
+                                <span><fa-icon class="ps-1" [icon]="loginIcon"/></span>
+                            </button>
+                        </div>
+                    </form>
 
-        <form (submit)="performLogin()" ngNativeValidate>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username"
-                    [(ngModel)]="username"
-                    required
-                >
+<!--                    <div class="text-center mt-4">-->
+<!--                        <a href="#" class="text-decoration-none accent-text">Forgot password?</a>-->
+<!--                    </div>-->
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-2">
+                            Don't have an account?
+                            <a routerLink="/signup" class="text-decoration-none accent-text">Create Account</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
+        </div>
     </div>
 </div>
