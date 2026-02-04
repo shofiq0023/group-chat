@@ -14,19 +14,4 @@ import {faCommentDots, faRightToBracket} from '@fortawesome/free-solid-svg-icons
 })
 export class Login {
     public loginIcon: IconDefinition = faRightToBracket;
-    public username: string = '';
-
-    constructor(private storageService: LocalStorageService, private router: Router) { }
-
-    public performLogin(): void {
-        this.setUser();
-        this.router.navigate(['/home']);
-    }
-
-    private setUser(): void {
-        this.storageService.store(GlobalConst.USERNAME_KEY, this.username);
-        this.storageService.store(GlobalConst.LOGIN_KEY, true.toString());
-    }
-
-    protected readonly chatIcon = faCommentDots;
 }
