@@ -1,12 +1,11 @@
 import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Data, SocketService} from '../../services/socket-service';
+import {SocketService} from '../../services/socket-service';
 import {Subject, takeUntil} from 'rxjs';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {FaIconComponent, IconDefinition} from '@fortawesome/angular-fontawesome';
 import {faBullhorn, faCommentDots, faLinkSlash, faPaperPlane, faUserGroup} from '@fortawesome/free-solid-svg-icons';
-import {NgxSonnerToaster, toast} from 'ngx-sonner';
-import {LocalStorageService} from '../../services/local-storage-service';
+import {toast} from 'ngx-sonner';
 import {BroadcastMessage} from '../../model/broadcast-message';
 
 interface Message {
@@ -18,7 +17,7 @@ interface Message {
 
 @Component({
     selector: 'app-home',
-    imports: [CommonModule, FormsModule, FaIconComponent, NgxSonnerToaster],
+    imports: [CommonModule, FormsModule, FaIconComponent],
     templateUrl: './home.html',
     styleUrl: './home.css',
 })

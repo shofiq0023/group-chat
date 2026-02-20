@@ -1,6 +1,6 @@
 package com.shofiqul.socket.security;
 
-import com.shofiqul.socket.entity.UsersEntity;
+import com.shofiqul.socket.entity.UserEntity;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +17,7 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public CustomUserDetails(UsersEntity user) {
+    public CustomUserDetails(UserEntity user) {
         this.name = user.getUsername();
         this.password = user.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority("USER"));

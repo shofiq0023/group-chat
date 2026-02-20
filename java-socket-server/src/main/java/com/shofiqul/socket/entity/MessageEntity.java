@@ -21,7 +21,7 @@ public class MessageEntity extends BaseEntity {
     @NotNull(message = "Sender cannot be null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
-    private UsersEntity sender;
+    private UserEntity sender;
 
     @NotNull(message = "Group cannot be null")
     @ManyToOne(fetch = FetchType.LAZY)

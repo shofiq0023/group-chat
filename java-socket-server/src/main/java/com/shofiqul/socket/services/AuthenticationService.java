@@ -1,14 +1,10 @@
 package com.shofiqul.socket.services;
 
-import com.shofiqul.socket.repositories.AuthenticationRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class AuthenticationService {
+import com.shofiqul.socket.dto.ApiResponse;
+import com.shofiqul.socket.records.SignupRequest;
+import com.shofiqul.socket.records.SignupResponse;
 
-    private final AuthenticationRepository authRepo;
+public interface AuthenticationService {
+    ApiResponse<SignupResponse> signup(SignupRequest signupRequest);
 }
