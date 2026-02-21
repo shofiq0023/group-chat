@@ -26,6 +26,7 @@ export class Signup {
     public readonly signupIcon: IconDefinition = faUserPlus;
 
     public loading: boolean = false;
+    public passwordMismatch: boolean = false;
 
     public username: string = '';
     public fullName: string = '';
@@ -37,17 +38,21 @@ export class Signup {
     }
 
     public handleSignup(): void {
-        this.loading = true;
         if (this.password != this.confirmPassword) {
-            // do something
+            this.passwordMismatch = true;
+            toast.error('Passwords do not match');
+            return;
         }
+        this.passwordMismatch = false;
 
+        this.loading = true;
         const payload: SignupRequest = {
             username: this.username,
             fullName: this.fullName,
             email: this.email,
             password: this.password
         }
+
         this.authService.signup(payload).subscribe({
             next: (res: ApiResponse<SignupResponse>) => {
                 this.loading = false;

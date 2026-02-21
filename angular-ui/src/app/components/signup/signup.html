@@ -28,14 +28,14 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input [(ngModel)]="password" type="password" class="form-control" name="password" placeholder="Create a password" required>
+                                <input [(ngModel)]="password" type="password" class="form-control" [class.error]="passwordMismatch" name="password" placeholder="Create a password" required>
                                 <div class="password-requirements mt-1">
                                     <small>Must be at least 4 characters</small>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input [(ngModel)]="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="Re-enter password" required>
+                                <input [(ngModel)]="confirmPassword" type="password" class="form-control" [class.error]="passwordMismatch" name="confirmPassword" placeholder="Re-enter password" required>
                             </div>
                         </div>
 
