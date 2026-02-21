@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {FaIconComponent, IconDefinition} from '@fortawesome/angular-fontawesome';
 import {faUserPlus} from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@ import {SignupResponse} from '../../model/signup-response';
 import {toast} from 'ngx-sonner';
 import {ApiResponse} from '../../model/api-response';
 import {Loader} from '../utils/loader/loader';
+import {finalize} from 'rxjs';
 
 @Component({
     selector: 'app-signup',
@@ -25,7 +26,7 @@ export class Signup {
     protected readonly toast = toast;
     public readonly signupIcon: IconDefinition = faUserPlus;
 
-    public loading: boolean = false;
+    public loading = signal(false);
     public passwordMismatch: boolean = false;
 
     public username: string = '';
@@ -45,7 +46,7 @@ export class Signup {
         }
         this.passwordMismatch = false;
 
-        this.loading = true;
+        this.loading.set(true)
         const payload: SignupRequest = {
             username: this.username,
             fullName: this.fullName,
@@ -53,9 +54,12 @@ export class Signup {
             password: this.password
         }
 
-        this.authService.signup(payload).subscribe({
+        this.authService.signup(payload)
+            .pipe(
+                finalize(() => this.loading.set(false))
+            )
+            .subscribe({
             next: (res: ApiResponse<SignupResponse>) => {
-                this.loading = false;
                 if (!res.success) {
                     const msg = res.message;
                     toast.error("Error!, " + msg);
@@ -68,7 +72,6 @@ export class Signup {
 
             },
             error: (err) => {
-                this.loading = false;
                 toast.error("Something went wrong!");
                 console.error(err.stack);
             }

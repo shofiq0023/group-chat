@@ -1,6 +1,8 @@
 package com.shofiqul.socket.controllers;
 
 import com.shofiqul.socket.dto.ApiResponse;
+import com.shofiqul.socket.records.LoginRequest;
+import com.shofiqul.socket.records.LoginResponse;
 import com.shofiqul.socket.records.SignupRequest;
 import com.shofiqul.socket.records.SignupResponse;
 import com.shofiqul.socket.servicesImpl.AuthenticationServiceImpl;
@@ -26,7 +28,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public void login() {
-
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 }

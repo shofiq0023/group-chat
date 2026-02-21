@@ -5,10 +5,10 @@
                 <div class="card-header accent-bg text-white text-center">
                     <h3 class="mb-0">Create Account</h3>
                 </div>
-                <app-loader [loading]="loading"/>
+                <app-loader [loading]="loading()"/>
 
                 <div class="card-body p-4">
-                    <form (submit)="handleSignup()" ngNativeValidate>
+                    <form #form="ngForm" (ngSubmit)="handleSignup()" ngNativeValidate>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fullName" class="form-label">Full Name</label>
@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn accent-btn btn-lg" [disabled]="loading">
+                            <button type="submit" class="btn accent-btn btn-lg" [disabled]="loading()">
                                 Sign Up
                                 <span><fa-icon class="ps-2" [icon]="signupIcon"/></span>
                             </button>
