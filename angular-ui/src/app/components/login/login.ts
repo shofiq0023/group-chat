@@ -10,6 +10,7 @@ import {LoginRequest} from '../../model/login-request';
 import {ApiResponse} from '../../model/api-response';
 import {LoginResponse} from '../../model/login-response';
 import {finalize} from 'rxjs';
+import {LocalStorageService} from '../../services/local-storage-service';
 
 @Component({
     selector: 'app-login',
@@ -19,6 +20,10 @@ import {finalize} from 'rxjs';
 })
 export class Login {
     protected readonly toast = toast;
+    protected readonly USERNAME: string = 'username';
+    protected readonly USER_ID: string = 'userId';
+    protected readonly TOKEN: string = 'token';
+
     public loginIcon: IconDefinition = faRightToBracket;
     public loading = signal(false);
 
@@ -42,6 +47,7 @@ export class Login {
             .subscribe({
                 next: (res: ApiResponse<LoginResponse>) => {
                     if (res.success) {
+                        this.authService.storeCredentials(res);
                         toast.success('Login successful!');
                         this.router.navigate(['/home']);
                     } else {

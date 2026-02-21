@@ -1,113 +1,94 @@
 <div class="chat-container">
-
-    <!-- Login Section -->
-    @if (!isConnected) {
-        <div class="login-section">
-            <h2>Connect to Chat</h2>
-            <input
-                type="text"
-                [(ngModel)]="username"
-                placeholder="Enter username"
-                (keyup.enter)="connectToServer()"
-                class="username-input"
-            />
-            <button (click)="connectToServer()" class="btn connect-btn">Connect</button>
+    <div class="chat-section">
+        <div class="header d-flex justify-content-between align-items-center text-white">
+            <h2>Welcome, {{ username }}!</h2>
+            <button (click)="disconnect()" class="btn btn-danger">
+                Sign out
+                <fa-icon class="ps-1 fa-sm" [icon]="disconnectIcon"/>
+            </button>
         </div>
-    }
 
-    <!-- Chat Section -->
-    @if (isConnected) {
-        <div class="chat-section">
-            <div class="header d-flex justify-content-between align-items-center text-white">
-                <h2>Welcome, {{ username }}!</h2>
-                <button (click)="disconnect()" class="btn btn-danger">
-                    Disconnect
-                    <fa-icon class="ps-1 fa-sm" [icon]="disconnectIcon"/>
-                </button>
+        <div class="main-content">
+            <!-- Users List -->
+            <div class="groups-panel">
+                <h3>
+                    <fa-icon class="pe-1" [icon]="groupIcon"/>
+                    0
+                </h3>
+                <div class="groups-list">
+                    <div
+                        class="group-item"
+                        [class.selected]="selectedUser === ''"
+                    >
+                        <span><fa-icon class="pe-1" [icon]="broadcastIcon"/></span>
+                        Broadcast to All
+                    </div>
+                    <!--                        @for (user of users; track user) {-->
+                    <!--                            <div-->
+                    <!--                                class="group-item"-->
+                    <!--                                [class.selected]="user === selectedUser"-->
+                    <!--                            >-->
+                    <!--                                <span class="group-status">●</span>-->
+                    <!--                                {{ user }}-->
+                    <!--                            </div>-->
+                    <!--                        }-->
+                </div>
             </div>
 
-            <div class="main-content">
-                <!-- Users List -->
-                <div class="groups-panel">
+            <!-- Messages Panel -->
+            <div class="messages-panel">
+                <div class="messages-header">
                     <h3>
-                        <fa-icon class="pe-1" [icon]="groupIcon"/>
-                        0
+                        {{ selectedUser ? 'Chat with ' + selectedUser : 'Broadcast Messages' }}
+                        <fa-icon class="ps-1" [icon]="chatIcon"/>
                     </h3>
-                    <div class="groups-list">
-                        <div
-                            class="group-item"
-                            [class.selected]="selectedUser === ''"
-                        >
-                            <span><fa-icon class="pe-1" [icon]="broadcastIcon"/></span>
-                            Broadcast to All
-                        </div>
-                        <!--                        @for (user of users; track user) {-->
-                        <!--                            <div-->
-                        <!--                                class="group-item"-->
-                        <!--                                [class.selected]="user === selectedUser"-->
-                        <!--                            >-->
-                        <!--                                <span class="group-status">●</span>-->
-                        <!--                                {{ user }}-->
-                        <!--                            </div>-->
-                        <!--                        }-->
-                    </div>
                 </div>
 
-                <!-- Messages Panel -->
-                <div class="messages-panel">
-                    <div class="messages-header">
-                        <h3>
-                            {{ selectedUser ? 'Chat with ' + selectedUser : 'Broadcast Messages' }}
-                            <fa-icon class="ps-1" [icon]="chatIcon"/>
-                        </h3>
-                    </div>
+                <div class="messages-list" #messageList>
+                    @for (msg of messages; let i = $index; track msg) {
+                        <div
+                            class="message"
+                            [class.own-message]="msg.fromUsername === username"
+                        >
 
-                    <div class="messages-list" #messageList>
-                        @for (msg of messages; let i = $index; track msg) {
-                            <div
-                                class="message"
-                                [class.own-message]="msg.fromUsername === username"
-                            >
-
-                                @if (i === 0 || messages[i - 1].fromUsername !== msg.fromUsername) {
-                                    <div class="message-header">
-                                        <strong>{{ msg.fromUsername }}</strong>
-                                        <span class="timestamp">
+                            @if (i === 0 || messages[i - 1].fromUsername !== msg.fromUsername) {
+                                <div class="message-header">
+                                    <strong>{{ msg.fromUsername }}</strong>
+                                    <span class="timestamp">
                                             {{ msg.timestamp | date:'hh:mm a, dd/MM/yy' }}
                                         </span>
-                                    </div>
-                                }
-
-                                <div class="message-body">
-                                    {{ msg.message }}
                                 </div>
+                            }
 
+                            <div class="message-body">
+                                {{ msg.message }}
                             </div>
-                        }
 
-                        @if (messages.length === 0) {
-                            <div class="no-messages">
-                                No messages yet. Start chatting!
-                            </div>
-                        }
-                    </div>
+                        </div>
+                    }
+
+                    @if (messages.length === 0) {
+                        <div class="no-messages">
+                            No messages yet. Start chatting!
+                        </div>
+                    }
+                </div>
 
 
-                    <div class="message-input">
-                        <input
-                            type="text"
-                            [(ngModel)]="messageText"
-                            placeholder="Type a message..."
-                            (keyup.enter)="sendMessage()"
-                            class="text-input"
-                        />
+                <div class="message-input">
+                    <input
+                        type="text"
+                        [(ngModel)]="messageText"
+                        placeholder="Type a message..."
+                        (keyup.enter)="sendMessage()"
+                        class="text-input"
+                    />
 
-                        <button (click)="sendMessage()" class="send-btn">Send
-                            <fa-icon class="ps-1 fa-sm" [icon]="sendIcon"/>
-                        </button>
-                    </div>
+                    <button (click)="sendMessage()" class="send-btn">Send
+                        <fa-icon class="ps-1 fa-sm" [icon]="sendIcon"/>
+                    </button>
                 </div>
             </div>
         </div>
-    }
+    </div>
 </div>

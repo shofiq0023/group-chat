@@ -7,6 +7,8 @@ import {FaIconComponent, IconDefinition} from '@fortawesome/angular-fontawesome'
 import {faBullhorn, faCommentDots, faLinkSlash, faPaperPlane, faUserGroup} from '@fortawesome/free-solid-svg-icons';
 import {toast} from 'ngx-sonner';
 import {BroadcastMessage} from '../../model/broadcast-message';
+import {AuthService} from '../../services/auth-service';
+import {Router} from '@angular/router';
 
 interface Message {
     from: string;
@@ -31,7 +33,6 @@ export class Home implements OnInit, OnDestroy {
     public chatIcon: IconDefinition = faCommentDots;
 
     public username = '';
-    public isConnected = false;
     public messages: BroadcastMessage[] = [];
     public selectedUser = '';
     public messageText = '';
@@ -40,7 +41,7 @@ export class Home implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    constructor(private socketService: SocketService, private cdr: ChangeDetectorRef) {
+    constructor(private socketService: SocketService, private cdr: ChangeDetectorRef, private authService: AuthService, private router: Router) {
     }
 
     ngOnInit(): void {
@@ -71,7 +72,6 @@ export class Home implements OnInit, OnDestroy {
 
         localStorage.setItem('username', this.username.toLowerCase());
         this.socketService.connect(this.username.toLowerCase());
-        this.isConnected = true;
 
         // Subscribe to incoming messages
         this.socketService.onGetMessage()
@@ -93,10 +93,11 @@ export class Home implements OnInit, OnDestroy {
 
     public disconnect(): void {
         this.socketService.disconnect();
-        this.isConnected = false;
         this.messages = [];
-        localStorage.removeItem('username');
+        this.authService.removeCredentials();
         toast.warning('Disconnected');
+        toast.warning('Logout successful!');
+        this.router.navigate(['/login']);
     }
 
     public sendMessage(): void {
